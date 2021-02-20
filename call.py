@@ -35,15 +35,14 @@ class Bitbucket:
             per_page = requests.get(
                 datapoint.url, params={"page": page}, headers=self.header)
 
-            print(per_page.url)
             data.append(per_page.json())
         return data
 
-    def get_monthly_pullrequest(self):
+    def get_monthly_pullrequest(self, date, branch):
 
         pullrequest_endpoint = f"{self.endpoint}/pullrequests"
         params = {
-            "q": 'state="MERGED" AND created_on > 2021-02-01 AND destination.branch.name = "master"',
+            "q": f'state="MERGED" AND created_on > {date} AND destination.branch.name = "{branch}"',
             "pagelen": self.perpage
         }
 
