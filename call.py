@@ -22,11 +22,29 @@ class Bitbucket:
             }
 
         self.endpoint = "https://api.bitbucket.org/2.0/repositories/auppteam/www.sisaupp.com"
+        self.perpage = 25
+
+    def pagement(self, datapoint):
+        data_size = datapoint.json()['size']
+        data = [datapoint.json()]
+        page = 1
+        while data_size > self.perpage:
+            page += 1
+            data_size -= self.perpage
+
+            per_page = requests.get(
+                datapoint.url, params={"page": page}, headers=self.header)
+
+            print(per_page.url)
+            data.append(per_page.json())
+        return data
 
     def get_monthly_pullrequest(self):
+
         pullrequest_endpoint = f"{self.endpoint}/pullrequests"
         params = {
-            "q": 'state="MERGED" AND created_on > 2021-02-19 AND destination.branch.name = "aupp_staging3"'
+            "q": 'state="MERGED" AND created_on > 2021-02-01 AND destination.branch.name = "master"',
+            "pagelen": self.perpage
         }
 
         try:
@@ -43,7 +61,7 @@ class Bitbucket:
                 print("token expired")
 
                 with open("./token/refresh_token", "r") as file:
-                    refresh_token = file.reader()
+                    refresh_token = file.read()
 
                 refresh = auth.authenticate(
                     env['sisaupp_key'], env['sisaupp_secret'], refresh_token=refresh_token)
@@ -53,7 +71,13 @@ class Bitbucket:
                 rt = requests.get(pullrequest_endpoint,
                                   params=params, headers=self.header)
 
-                print(rt.json()['size'])
+                if rt.json()['size'] > self.perpage:
+                    return self.pagement(rt)
+                else:
+                    return [rt.json()]
 
             else:
-                print(r.json()['size'])
+                if r.json()['size'] > self.perpage:
+                    return self.pagement(r)
+                else:
+                    return [r.json()]
