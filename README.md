@@ -13,3 +13,8 @@ Create a `.env` file to store bitbucket `client_id` and `client_secret`.
 3. run `main.py`, for the very first time, it will display an token authenticate link in the console.
 4. copy the link, paste it in browser and copy the redirect url. **url** contain authentication code.
 5. paste the url back in the console.
+
+#### readmore
+
+- [bitbucket api document](https://developer.atlassian.com/bitbucket/api/2/reference/?utm_source=/bitbucket/api/2/reference&utm_medium=302)
+- [Rauth Python library](https://rauth.readthedocs.io/en/latest/)
