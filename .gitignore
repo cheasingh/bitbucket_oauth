@@ -1,0 +1,6 @@
+.env
+token/
+__pycache__/
+.vscode/
+test.json
+test.py
